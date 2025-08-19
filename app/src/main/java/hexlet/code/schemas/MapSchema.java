@@ -24,4 +24,10 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
         });
         return this;
     }
+
+    public MapSchema sizeof(int size) {
+        addCheck(map -> map != null && map.size() == size);
+        return this;
+    }
+
 }

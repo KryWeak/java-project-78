@@ -67,7 +67,7 @@ public class ValidatorTest {
         assertFalse(schema.isValid(Map.of("name", "", "age", 30)));
         assertFalse(schema.isValid(Map.of("name", "Bob", "age", -1)));
 
-        schema.addCheck(map -> map.size() == 2);
+        schema.sizeof(2); // новый метод вместо addCheck
         assertTrue(schema.isValid(Map.of("name", "Tom", "age", 20)));
         assertFalse(schema.isValid(Map.of("name", "Tom")));
     }
