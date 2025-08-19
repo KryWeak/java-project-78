@@ -4,11 +4,12 @@ import java.util.Map;
 
 public class MapSchema {
 
-    private boolean isRequired = false;
+    private boolean required = false;
     private Integer expectedSize = null;
+    private Map<String, Object> shapeSchemas = null;
 
     public MapSchema required() {
-        this.isRequired = true;
+        this.required = true;
         return this;
     }
 
@@ -17,21 +18,31 @@ public class MapSchema {
         return this;
     }
 
-    public boolean isValid(Object value) {
+    public MapSchema shape(Map<String, ?> schemas) {
+        this.shapeSchemas = (Map<String, Object>) schemas;
+        return this;
+    }
+
+    public boolean isValid(Map<?, ?> value) {
         if (value == null) {
-            return !isRequired;
+            return !required;
         }
-
-        if (!(value instanceof Map)) {
+        if (expectedSize != null && value.size() != expectedSize) {
             return false;
         }
+        if (shapeSchemas != null) {
+            for (String key : shapeSchemas.keySet()) {
+                Object schema = shapeSchemas.get(key);
+                Object fieldValue = value.get(key);
 
-        Map<?, ?> mapValue = (Map<?, ?>) value;
+                if (schema instanceof StringSchema stringSchema) {
+                    if (!stringSchema.isValid((String) fieldValue)) {
+                        return false;
+                    }
+                }
 
-        if (expectedSize != null && mapValue.size() != expectedSize) {
-            return false;
+            }
         }
-
         return true;
     }
 }
