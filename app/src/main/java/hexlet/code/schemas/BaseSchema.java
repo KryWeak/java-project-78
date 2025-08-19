@@ -8,7 +8,7 @@ public class BaseSchema<T> {
 
     private final List<Predicate<T>> checks = new ArrayList<>();
 
-    protected void addCheck(Predicate<T> check) {
+    public void addCheck(Predicate<T> check) {
         checks.add(check);
     }
 
