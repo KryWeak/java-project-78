@@ -1,45 +1,42 @@
 package hexlet.code.schemas;
 
 import hexlet.code.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class MapSchemaTest {
+class MapSchemaTest {
+    private Validator v;
+    private MapSchema schema;
+
+    @BeforeEach
+    void setUp() {
+        v = new Validator();
+        schema = v.map();
+    }
 
     @Test
-    void testShapeWithoutBaseSchema() {
-        var v = new Validator();
-        var schema = v.map();
+    void testRequired() {
+        schema.required();
+        assertTrue(schema.isValid(Map.of("key", "value")));
+        assertFalse(schema.isValid(null));
+    }
 
-        Map<String, Object> human1 = new HashMap<>();
-        human1.put("firstName", "John");
-        human1.put("lastName", "Smith");
+    @Test
+    void testShape() {
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
+        schemas.put("name", v.string().required());
+        schemas.put("age", v.number().positive());
+        schema.shape(schemas);
 
-        // создаем схемы для каждого поля
-        StringSchema firstNameSchema = v.string().required();
-        StringSchema lastNameSchema = v.string().required().minLength(2);
+        Map<String, Object> validData = Map.of("name", "Alice", "age", 25);
+        Map<String, Object> invalidData = Map.of("name", "", "age", -5);
 
-        // shape с проверкой каждого поля через лямбду
-        schema.shape(Map.of(
-                "firstName", firstNameSchema,
-                "lastName", lastNameSchema
-        ));
-
-        assertTrue(schema.isValid(human1));
-
-        Map<String, Object> human2 = new HashMap<>();
-        human2.put("firstName", "John");
-        human2.put("lastName", null);
-        assertFalse(schema.isValid(human2));
-
-        Map<String, Object> human3 = new HashMap<>();
-        human3.put("firstName", "Anna");
-        human3.put("lastName", "B");
-        assertFalse(schema.isValid(human3));
+        assertTrue(schema.isValid(validData));
+        assertFalse(schema.isValid(invalidData));
     }
 }

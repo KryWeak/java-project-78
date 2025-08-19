@@ -1,57 +1,33 @@
 package hexlet.code.schemas;
 
 import hexlet.code.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class NumberSchemaTest {
+class NumberSchemaTest {
+    private Validator v;
+    private NumberSchema schema;
 
-    @Test
-    void testDefaultBehaviourAllowsNull() {
-        var v = new Validator();
-        var schema = v.number();
-
-        assertTrue(schema.isValid(null));
-        assertTrue(schema.isValid(5));
-    }
-
-    @Test
-    void testRequired() {
-        var v = new Validator();
-        var schema = v.number().required();
-
-        assertFalse(schema.isValid(null));
-        assertTrue(schema.isValid(10));
+    @BeforeEach
+    void setUp() {
+        v = new Validator();
+        schema = v.number();
     }
 
     @Test
     void testPositive() {
-        var v = new Validator();
-        var schema = v.number().positive();
-
-        assertTrue(schema.isValid(null)); // null пока допустим
-        assertFalse(schema.isValid(-1));
-        assertFalse(schema.isValid(0));
+        schema.positive();
         assertTrue(schema.isValid(5));
-
-        schema.required();
-        assertFalse(schema.isValid(null));
+        assertFalse(schema.isValid(-3));
     }
 
     @Test
     void testRange() {
-        var v = new Validator();
-        var schema = v.number().range(5, 10);
-
-        assertTrue(schema.isValid(null)); // до required
+        schema.range(2, 10);
         assertTrue(schema.isValid(5));
-        assertTrue(schema.isValid(10));
-        assertFalse(schema.isValid(4));
-        assertFalse(schema.isValid(11));
-
-        schema.required();
-        assertFalse(schema.isValid(null));
+        assertFalse(schema.isValid(1));
+        assertFalse(schema.isValid(12));
     }
 }

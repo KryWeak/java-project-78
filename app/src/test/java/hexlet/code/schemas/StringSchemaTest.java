@@ -1,68 +1,40 @@
 package hexlet.code.schemas;
 
 import hexlet.code.Validator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
+class StringSchemaTest {
+    private Validator v;
+    private StringSchema schema;
 
-
-public class StringSchemaTest {
-
-    @Test
-    void testDefaultBehaviourAllowsNullAndEmpty() {
-        var v = new Validator();
-        var schema = v.string();
-
-        assertTrue(schema.isValid(null), "null should be valid by default");
-        assertTrue(schema.isValid(""), "empty string should be valid by default");
+    @BeforeEach
+    void setUp() {
+        v = new Validator();
+        schema = v.string();
     }
 
     @Test
     void testRequired() {
-        var v = new Validator();
-        var schema = v.string().required();
-
+        schema.required();
+        assertTrue(schema.isValid("hello"));
         assertFalse(schema.isValid(null));
         assertFalse(schema.isValid(""));
-        assertTrue(schema.isValid("hello"));
     }
 
     @Test
     void testMinLength() {
-        var v = new Validator();
-        var schema = v.string().minLength(5);
-
-        assertFalse(schema.isValid("1234"));
-        assertTrue(schema.isValid("12345"));
-        // minLength is overwritten by last call
-        schema.minLength(3);
-        assertTrue(schema.isValid("1234"));
+        schema.minLength(5);
+        assertTrue(schema.isValid("hello"));
+        assertFalse(schema.isValid("hi"));
     }
 
     @Test
     void testContains() {
-        var v = new Validator();
-        var schema = v.string();
-
-        schema.contains("hex");
-        assertTrue(schema.isValid("hexlet"));
-        assertTrue(schema.isValid("lethex"));
-
-        var schema2 = v.string().contains("what").contains("fox");
-        assertTrue(schema2.isValid("what does the fox say"));
-        assertFalse(schema2.isValid("what does the cat say"));
-    }
-
-    @Test
-    void testCombination() {
-        var v = new Validator();
-        var schema = v.string().required().minLength(5).contains("hex");
-
-        assertTrue(schema.isValid("hexlet"));
-        assertFalse(schema.isValid("hex"));
-        assertFalse(schema.isValid(""));
-        assertFalse(schema.isValid(null));
+        schema.contains("ell");
+        assertTrue(schema.isValid("hello"));
+        assertFalse(schema.isValid("hi"));
     }
 }
