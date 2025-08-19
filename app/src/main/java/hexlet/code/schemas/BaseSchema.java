@@ -15,7 +15,9 @@ public class BaseSchema<T> {
     public boolean isValid(Object value) {
         for (Predicate<T> check : checks) {
             //noinspection unchecked
-            if (!check.test((T) value)) return false;
+            if (!check.test((T) value)) {
+                return false;
+            }
         }
         return true;
     }
