@@ -1,2 +1,6 @@
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/KryWeak/java-project-78/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/KryWeak/java-project-78/actions)
+
+[![CI](https://github.com/your_github_login/your_repo_name/actions/workflows/ci.yml/badge.svg)](https://github.com/your_github_login/your_repo_name/actions/workflows/ci.yml)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=KryWeak_java-project-78&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=KryWeak_java-project-78)
