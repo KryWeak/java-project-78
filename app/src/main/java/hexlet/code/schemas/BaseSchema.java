@@ -15,12 +15,10 @@ public class BaseSchema<T> {
     public boolean isValid(Object value) {
         for (Predicate<T> check : checks) {
             try {
-                //noinspection unchecked
                 if (!check.test((T) value)) {
                     return false;
                 }
             } catch (ClassCastException e) {
-                // Значит value не того типа T — считаем невалидным
                 return false;
             }
         }

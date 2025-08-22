@@ -9,7 +9,7 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
         return this;
     }
 
-    public MapSchema shape(Map<String, BaseSchema<?>> schemas) {
+    public MapSchema shape(Map<String, ? extends BaseSchema<?>> schemas) {
         addCheck(value -> {
             if (value == null) {
                 return true;
@@ -29,5 +29,4 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
         addCheck(map -> map != null && map.size() == size);
         return this;
     }
-
 }
