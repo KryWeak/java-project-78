@@ -18,7 +18,6 @@ class ValidatorTest {
         Validator v = new Validator();
         StringSchema schema = v.string();
 
-        // без required должно быть валидно для null и ""
         assertTrue(schema.isValid(null));
         assertTrue(schema.isValid(""));
 
