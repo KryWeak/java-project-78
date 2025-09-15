@@ -2,6 +2,7 @@ plugins {
     id("java")
     checkstyle
     id("org.sonarqube") version "6.2.0.5505"
+    id("jacoco")
 }
 
 group = "hexlet.code"
@@ -31,4 +32,17 @@ sonar {
         property("sonar.projectKey", "KryWeak_java-project-78")
         property("sonar.organization", "kryweak")
     }
+
+    jacoco {
+        toolVersion = "0.8.10"
+    }
+
+    tasks.jacocoTestReport {
+        dependsOn(tasks.test)
+        reports {
+            xml.required.set(true)
+            html.required.set(true)
+        }
+    }
+
 }
