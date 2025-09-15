@@ -31,6 +31,9 @@ sonar {
     properties {
         property("sonar.projectKey", "KryWeak_java-project-78")
         property("sonar.organization", "kryweak")
+        property("sonar.junit.reportPaths", "build/test-results/test")
+        property("sonar.jacoco.reportPaths", "build/jacoco/test.exec")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
     }
 
     jacoco {
