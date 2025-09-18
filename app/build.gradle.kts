@@ -22,7 +22,7 @@ tasks.test {
 }
 
 checkstyle {
-    toolVersion = "10.12.4" // последняя версия на сегодня
+    toolVersion = "10.12.4"
     config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
     isIgnoreFailures = false
 }
