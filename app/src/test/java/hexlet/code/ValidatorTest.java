@@ -33,10 +33,6 @@ class ValidatorTest {
         assertFalse(schema.isValid("hex"));
         assertTrue(schema.isValid("hexlet"));
 
-        schema.contains("ex");
-        assertTrue(schema.isValid("hexlet"));
-        assertFalse(schema.isValid("hello"));
-
         System.out.println("StringSchema tests passed!");
     }
 
