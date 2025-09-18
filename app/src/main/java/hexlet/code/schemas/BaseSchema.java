@@ -5,19 +5,22 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class BaseSchema<T> {
-
     private final List<Predicate<T>> checks = new ArrayList<>();
 
     public void addCheck(Predicate<T> check) {
         checks.add(check);
     }
 
+    @SuppressWarnings("unchecked")
     public boolean isValid(Object value) {
+        // null считается валидным, пока не вызван required()
+        if (value == null) {
+            return checks.stream().noneMatch(pred -> pred.test(null) == false);
+        }
+
         for (Predicate<T> check : checks) {
             try {
-                @SuppressWarnings("unchecked")
-                T casted = (T) value;
-                if (!check.test(casted)) {
+                if (!check.test((T) value)) {
                     return false;
                 }
             } catch (ClassCastException e) {

@@ -2,10 +2,10 @@ package hexlet.code.schemas;
 
 public final class StringSchema extends BaseSchema<String> {
 
-    private boolean requiredCalled = false;
+    private boolean isRequired = false;
 
     public StringSchema required() {
-        requiredCalled = true;
+        isRequired = true;
         addCheck(value -> value != null && !value.isEmpty());
         return this;
     }
@@ -22,7 +22,7 @@ public final class StringSchema extends BaseSchema<String> {
 
     @Override
     public boolean isValid(Object value) {
-        if (requiredCalled && (value == null || !(value instanceof String) || ((String) value).isEmpty())) {
+        if (isRequired && (value == null || !(value instanceof String) || ((String) value).isEmpty())) {
             return false;
         }
         return super.isValid(value);
