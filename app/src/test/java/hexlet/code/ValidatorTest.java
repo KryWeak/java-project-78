@@ -51,6 +51,7 @@ class ValidatorTest {
 
         schema.required();
         assertFalse(schema.isValid(null));
+        assertFalse(schema.isValid("5"));
         assertTrue(schema.isValid(10));
 
         schema.positive();
@@ -72,7 +73,7 @@ class ValidatorTest {
         Validator v = new Validator();
         MapSchema schema = v.map();
 
-        System.out.println("Testing MapSchema simple...");
+        System.out.println("Testing simple MapSchema...");
 
         assertTrue(schema.isValid(null));
 
@@ -90,7 +91,7 @@ class ValidatorTest {
         map1.put("key3", "extra");
         assertFalse(schema.isValid(map1));
 
-        System.out.println("MapSchema simple tests passed!");
+        System.out.println("Simple MapSchema tests passed!");
     }
 
     @Test
@@ -101,31 +102,33 @@ class ValidatorTest {
 
         MapSchema schema = v.map();
 
+        // Карта схем для shape()
         Map<String, BaseSchema<?>> shapeMap = new HashMap<>();
         shapeMap.put("name", v.string().required());
         shapeMap.put("surname", v.string().required().minLength(3));
 
         schema.shape(shapeMap);
 
-        Map<String, Object> human1 = new HashMap<>();
-        human1.put("name", "John");
-        human1.put("surname", "Smith");
-        assertTrue(schema.isValid(human1));
+        // Проверяем реальные данные (Map<String, Object>)
+        Map<String, Object> actual1 = new HashMap<>();
+        actual1.put("name", "John");
+        actual1.put("surname", "Smith");
+        assertTrue(schema.isValid(actual1));
 
-        Map<String, Object> human2 = new HashMap<>();
-        human2.put("name", "Tom");
-        human2.put("surname", "Li");
-        assertFalse(schema.isValid(human2));
+        Map<String, Object> actual2 = new HashMap<>();
+        actual2.put("name", "Tom");
+        actual2.put("surname", "Li"); // слишком короткое
+        assertFalse(schema.isValid(actual2));
 
-        Map<String, Object> human3 = new HashMap<>();
-        human3.put("name", null);
-        human3.put("surname", "Brown");
-        assertFalse(schema.isValid(human3));
+        Map<String, Object> actual3 = new HashMap<>();
+        actual3.put("name", null);
+        actual3.put("surname", "Brown");
+        assertFalse(schema.isValid(actual3));
 
-        Map<String, Object> human4 = new HashMap<>();
-        human4.put("name", "Alice");
-        human4.put("surname", "Smith");
-        assertTrue(schema.isValid(human4));
+        Map<String, Object> actual4 = new HashMap<>();
+        actual4.put("name", "Alice");
+        actual4.put("surname", "Smith");
+        assertTrue(schema.isValid(actual4));
 
         System.out.println("MapSchema shape tests passed!");
     }

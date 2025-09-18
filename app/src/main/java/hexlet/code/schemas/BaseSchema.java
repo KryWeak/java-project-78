@@ -8,13 +8,19 @@ public class BaseSchema<T> {
 
     private final List<Predicate<T>> checks = new ArrayList<>();
 
-    protected void addCheck(Predicate<T> check) {
+    public void addCheck(Predicate<T> check) {
         checks.add(check);
     }
 
-    public boolean isValid(T value) {
+    public boolean isValid(Object value) {
         for (Predicate<T> check : checks) {
-            if (!check.test(value)) {
+            try {
+                @SuppressWarnings("unchecked")
+                T casted = (T) value;
+                if (!check.test(casted)) {
+                    return false;
+                }
+            } catch (ClassCastException e) {
                 return false;
             }
         }
