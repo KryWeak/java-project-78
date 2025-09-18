@@ -15,7 +15,7 @@ public class BaseSchema<T> {
     public boolean isValid(Object value) {
         // null считается валидным, пока не вызван required()
         if (value == null) {
-            return checks.stream().noneMatch(pred -> pred.test(null) == false);
+            return checks.stream().allMatch(pred -> pred.test(null));
         }
 
         for (Predicate<T> check : checks) {
