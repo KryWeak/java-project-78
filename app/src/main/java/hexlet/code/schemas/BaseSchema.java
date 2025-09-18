@@ -13,11 +13,6 @@ public class BaseSchema<T> {
 
     @SuppressWarnings("unchecked")
     public boolean isValid(Object value) {
-        // null считается валидным, пока не вызван required()
-        if (value == null) {
-            return checks.stream().allMatch(pred -> pred.test(null));
-        }
-
         for (Predicate<T> check : checks) {
             try {
                 if (!check.test((T) value)) {
