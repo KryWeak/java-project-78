@@ -9,11 +9,6 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
         return this;
     }
 
-    public MapSchema sizeof(int size) {
-        addCheck(map -> map != null && map.size() == size);
-        return this;
-    }
-
     public MapSchema shape(Map<String, ? extends BaseSchema<?>> schemas) {
         addCheck(value -> {
             if (value == null) {
@@ -21,13 +16,17 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
             }
             for (var entry : schemas.entrySet()) {
                 Object val = value.get(entry.getKey());
-                BaseSchema<Object> schema = (BaseSchema<Object>) entry.getValue();
-                if (!schema.isValid(val)) {
+                if (!entry.getValue().isValid(val)) {
                     return false;
                 }
             }
             return true;
         });
+        return this;
+    }
+
+    public MapSchema sizeof(int size) {
+        addCheck(map -> map != null && map.size() == size);
         return this;
     }
 }

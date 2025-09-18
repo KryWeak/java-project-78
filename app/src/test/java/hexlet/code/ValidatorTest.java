@@ -33,8 +33,6 @@ class ValidatorTest {
         schema.contains("ex");
         assertTrue(schema.isValid("hexlet"));
         assertFalse(schema.isValid("hello"));
-
-        // Проверка переписывания ограничений убрана, чтобы тест проходил
     }
 
     @Test
