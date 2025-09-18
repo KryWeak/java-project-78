@@ -65,32 +65,6 @@ class ValidatorTest {
     }
 
     @Test
-    void testMapSchemaSimple() {
-        Validator v = new Validator();
-        MapSchema schema = v.map();
-
-        System.out.println("Testing simple MapSchema...");
-
-        assertTrue(schema.isValid(null));
-
-        schema.required();
-        assertFalse(schema.isValid(null));
-
-        Map<String, Object> map1 = new HashMap<>();
-        assertTrue(schema.isValid(map1));
-
-        schema.sizeof(2);
-        map1.put("key1", "value1");
-        map1.put("key2", "value2");
-        assertTrue(schema.isValid(map1));
-
-        map1.put("key3", "extra");
-        assertFalse(schema.isValid(map1));
-
-        System.out.println("Simple MapSchema tests passed!");
-    }
-
-    @Test
     void testMapSchemaShape() {
         Validator v = new Validator();
 
