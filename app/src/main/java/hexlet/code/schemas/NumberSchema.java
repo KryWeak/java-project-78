@@ -1,19 +1,18 @@
 package hexlet.code.schemas;
 
-public final class NumberSchema extends BaseSchema<Integer> {
-
+public class NumberSchema extends BaseSchema<Number> {
     public NumberSchema required() {
-        addCheck(value -> value != null);
+        super.required();
         return this;
     }
 
     public NumberSchema positive() {
-        addCheck(value -> value == null || value > 0);
+        checks.add(value -> value.doubleValue() > 0);
         return this;
     }
 
     public NumberSchema range(int min, int max) {
-        addCheck(value -> value == null || (value >= min && value <= max));
+        checks.add(value -> value.doubleValue() >= min && value.doubleValue() <= max);
         return this;
     }
 }

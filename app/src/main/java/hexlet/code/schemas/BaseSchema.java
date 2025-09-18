@@ -4,24 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BaseSchema<T> {
+public abstract class BaseSchema<T> {
+    protected boolean isRequired = false;
+    protected List<Predicate<T>> checks = new ArrayList<>();
 
-    private final List<Predicate<T>> checks = new ArrayList<>();
-
-    public void addCheck(Predicate<T> check) {
-        checks.add(check);
+    public BaseSchema<T> required() {
+        this.isRequired = true;
+        return this;
     }
 
-    public boolean isValid(Object value) {
-        for (Predicate<T> check : checks) {
-            try {
-                if (!check.test((T) value)) {
-                    return false;
-                }
-            } catch (ClassCastException e) {
-                return false;
-            }
+    public boolean isValid(T value) {
+        if (value == null) {
+            return !isRequired;
         }
-        return true;
+        return checks.stream().allMatch(check -> check.test(value));
     }
 }

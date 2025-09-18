@@ -1,111 +1,172 @@
 package hexlet.code;
 
+import hexlet.code.schemas.BaseSchema;
 import hexlet.code.schemas.MapSchema;
 import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 
-class ValidatorTest {
+public class ValidatorTest {
+    private Validator v;
+    private StringSchema stringSchema;
+    private NumberSchema numberSchema;
+    private MapSchema mapSchema;
 
-    @Test
-    void testStringSchema() {
-        Validator v = new Validator();
-        StringSchema schema = v.string();
-
-        assertTrue(schema.isValid(null));
-        assertTrue(schema.isValid(""));
-
-        schema.required();
-        assertFalse(schema.isValid(null));
-        assertFalse(schema.isValid(""));
-        assertTrue(schema.isValid("hexlet"));
-
-        schema.minLength(5);
-        assertFalse(schema.isValid("hex"));
-        assertTrue(schema.isValid("hexlet"));
-
-        schema.contains("ex");
-        assertTrue(schema.isValid("hexlet"));
-        assertFalse(schema.isValid("hello"));
+    @BeforeEach
+    void setUp() {
+        v = new Validator();
+        stringSchema = v.string();
+        numberSchema = v.number();
+        mapSchema = v.map();
     }
 
     @Test
-    void testNumberSchema() {
-        Validator v = new Validator();
-        NumberSchema schema = v.number();
-
-        assertTrue(schema.isValid(null));
-
-        schema.required();
-        assertFalse(schema.isValid(null));
-        assertFalse(schema.isValid("5")); // не Integer
-        assertTrue(schema.isValid(10));
-
-        schema.positive();
-        assertTrue(schema.isValid(5));
-        assertFalse(schema.isValid(-10));
-        assertFalse(schema.isValid(0));
-
-        schema.range(5, 10);
-        assertTrue(schema.isValid(5));
-        assertTrue(schema.isValid(10));
-        assertFalse(schema.isValid(4));
-        assertFalse(schema.isValid(11));
+    void testStringSchemaEmptyAndNullBeforeRequired() {
+        assertThat(stringSchema.isValid("")).isTrue();
+        assertThat(stringSchema.isValid(null)).isTrue();
     }
 
     @Test
-    void testMapSchemaSimple() {
-        Validator v = new Validator();
-        MapSchema schema = v.map();
+    void testStringSchemaRequired() {
+        stringSchema.required();
+        assertThat(stringSchema.isValid(null)).isFalse();
+        assertThat(stringSchema.isValid("")).isFalse();
+        assertThat(stringSchema.isValid("what does the fox say")).isTrue();
+        assertThat(stringSchema.isValid("hexlet")).isTrue();
+    }
 
-        assertTrue(schema.isValid(null));
+    @Test
+    void testStringSchemaMinLength() {
+        stringSchema.minLength(5);
+        assertThat(stringSchema.isValid("hex")).isFalse();
+        assertThat(stringSchema.isValid("hexlet")).isTrue();
+    }
 
-        schema.required();
-        assertFalse(schema.isValid(null));
+    @Test
+    void testStringSchemaContains() {
+        stringSchema.contains("wh");
+        assertThat(stringSchema.isValid("what does the fox say")).isTrue();
+        stringSchema = v.string().contains("what");
+        assertThat(stringSchema.isValid("what does the fox say")).isTrue();
+        stringSchema = v.string().contains("whatthe");
+        assertThat(stringSchema.isValid("what does the fox say")).isFalse();
+    }
 
-        Map<String, Object> map1 = new HashMap<>();
-        assertTrue(schema.isValid(map1));
+    @Test
+    void testStringSchemaCombined() {
+        stringSchema.required().minLength(5).contains("hex");
+        assertThat(stringSchema.isValid("hexlet")).isTrue();
+        assertThat(stringSchema.isValid("hello")).isFalse();
+        assertThat(stringSchema.isValid("hex")).isFalse();
+    }
 
-        schema.sizeof(2);
-        map1.put("key1", "value1");
-        map1.put("key2", "value2");
-        assertTrue(schema.isValid(map1));
+    @Test
+    void testNumberSchemaNullBeforeRequired() {
+        assertThat(numberSchema.isValid(null)).isTrue();
+        assertThat(numberSchema.isValid(5)).isTrue();
+    }
 
-        map1.put("key3", "extra");
-        assertFalse(schema.isValid(map1));
+    @Test
+    void testNumberSchemaRequired() {
+        numberSchema.required();
+        assertThat(numberSchema.isValid(null)).isFalse();
+        assertThat(numberSchema.isValid(10)).isTrue();
+    }
+
+    @Test
+    void testNumberSchemaPositive() {
+        numberSchema.positive();
+        assertThat(numberSchema.isValid(null)).isTrue();
+        assertThat(numberSchema.isValid(10)).isTrue();
+        assertThat(numberSchema.isValid(-10)).isFalse();
+        assertThat(numberSchema.isValid(0)).isFalse();
+    }
+
+    @Test
+    void testNumberSchemaRange() {
+        numberSchema.range(5, 10);
+        assertThat(numberSchema.isValid(5)).isTrue();
+        assertThat(numberSchema.isValid(10)).isTrue();
+        assertThat(numberSchema.isValid(4)).isFalse();
+        assertThat(numberSchema.isValid(11)).isFalse();
+    }
+
+    @Test
+    void testNumberSchemaCombined() {
+        numberSchema.required().positive().range(5, 10);
+        assertThat(numberSchema.isValid(5)).isTrue();
+        assertThat(numberSchema.isValid(0)).isFalse();
+        assertThat(numberSchema.isValid(null)).isFalse();
+        assertThat(numberSchema.isValid(11)).isFalse();
+    }
+
+    @Test
+    void testMapSchemaNullBeforeRequired() {
+        assertThat(mapSchema.isValid(null)).isTrue();
+    }
+
+    @Test
+    void testMapSchemaRequired() {
+        mapSchema.required();
+        assertThat(mapSchema.isValid(null)).isFalse();
+        assertThat(mapSchema.isValid(new HashMap<>())).isTrue();
+        Map<String, String> data = new HashMap<>();
+        data.put("key1", "value1");
+        assertThat(mapSchema.isValid(data)).isTrue();
+    }
+
+    @Test
+    void testMapSchemaSizeOf() {
+        mapSchema.sizeof(2);
+        Map<String, String> data = new HashMap<>();
+        data.put("key1", "value1");
+        assertThat(mapSchema.isValid(data)).isFalse();
+        data.put("key2", "value2");
+        assertThat(mapSchema.isValid(data)).isTrue();
+    }
+
+    @Test
+    void testMapSchemaCombined() {
+        mapSchema.required().sizeof(2);
+        assertThat(mapSchema.isValid(null)).isFalse();
+        Map<String, String> data = new HashMap<>();
+        data.put("key1", "value1");
+        assertThat(mapSchema.isValid(data)).isFalse();
+        data.put("key2", "value2");
+        assertThat(mapSchema.isValid(data)).isTrue();
     }
 
     @Test
     void testMapSchemaShape() {
-        Validator v = new Validator();
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
+        schemas.put("firstName", v.string().required());
+        schemas.put("lastName", v.string().required().minLength(2));
+        mapSchema.shape(schemas);
 
-        MapSchema schema = v.map();
+        Map<String, String> human1 = new HashMap<>();
+        human1.put("firstName", "John");
+        human1.put("lastName", "Smith");
+        assertThat(mapSchema.isValid(human1)).isTrue();
 
-        Map<String, StringSchema> shape = new HashMap<>();
-        shape.put("name", v.string().required());
-        shape.put("surname", v.string().required().minLength(3));
+        Map<String, String> human2 = new HashMap<>();
+        human2.put("firstName", "John");
+        human2.put("lastName", null);
+        assertThat(mapSchema.isValid(human2)).isFalse();
 
-        schema.shape(new HashMap<>(shape));
+        Map<String, String> human3 = new HashMap<>();
+        human3.put("firstName", "Anna");
+        human3.put("lastName", "B");
+        assertThat(mapSchema.isValid(human3)).isFalse();
 
-        Map<String, Object> human1 = new HashMap<>();
-        human1.put("name", "John");
-        human1.put("surname", "Smith");
-        assertTrue(schema.isValid(human1));
-
-        Map<String, Object> human2 = new HashMap<>();
-        human2.put("name", "Tom");
-        human2.put("surname", "Li"); // слишком короткое
-        assertFalse(schema.isValid(human2));
-
-        Map<String, Object> human3 = new HashMap<>();
-        human3.put("name", null);
-        human3.put("surname", "Brown");
-        assertFalse(schema.isValid(human3));
+        Map<String, String> human4 = new HashMap<>();
+        human4.put("firstName", "");
+        human4.put("lastName", "Johnson");
+        assertThat(mapSchema.isValid(human4)).isFalse();
     }
 }
