@@ -1,7 +1,5 @@
 package hexlet.code.schemas;
 
-import java.util.Objects;
-
 public final class StringSchema extends BaseSchema<String> {
 
     private boolean required = false;
