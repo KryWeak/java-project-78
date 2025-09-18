@@ -1,5 +1,6 @@
 package hexlet.code;
 
+import hexlet.code.schemas.BaseSchema;
 import hexlet.code.schemas.MapSchema;
 import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
@@ -100,11 +101,11 @@ class ValidatorTest {
 
         MapSchema schema = v.map();
 
-        Map<String, StringSchema> shape = new HashMap<>();
-        shape.put("name", v.string().required());
-        shape.put("surname", v.string().required().minLength(3));
+        Map<String, BaseSchema<?>> shapeMap = new HashMap<>();
+        shapeMap.put("name", v.string().required());
+        shapeMap.put("surname", v.string().required().minLength(3));
 
-        schema.shape(new HashMap<>(shape));
+        schema.shape(shapeMap);
 
         Map<String, Object> human1 = new HashMap<>();
         human1.put("name", "John");
@@ -113,13 +114,18 @@ class ValidatorTest {
 
         Map<String, Object> human2 = new HashMap<>();
         human2.put("name", "Tom");
-        human2.put("surname", "Li"); // слишком короткое
+        human2.put("surname", "Li");
         assertFalse(schema.isValid(human2));
 
         Map<String, Object> human3 = new HashMap<>();
         human3.put("name", null);
         human3.put("surname", "Brown");
         assertFalse(schema.isValid(human3));
+
+        Map<String, Object> human4 = new HashMap<>();
+        human4.put("name", "Alice");
+        human4.put("surname", "Smith");
+        assertTrue(schema.isValid(human4));
 
         System.out.println("MapSchema shape tests passed!");
     }
