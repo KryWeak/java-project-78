@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class MapSchema extends BaseSchema<Map> {
+public final class MapSchema extends BaseSchema<Map> {
     private Map<String, BaseSchema<Object>> shapeSchemas = new HashMap<>();
 
     public MapSchema required() {
