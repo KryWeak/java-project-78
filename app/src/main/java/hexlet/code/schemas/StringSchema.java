@@ -1,10 +1,9 @@
 package hexlet.code.schemas;
 
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
 public class StringSchema extends BaseSchema<String> {
-    private Predicate<String> minLengthCheck = null;
+    private Integer minLength = null;
 
     public StringSchema() {
         checks = new ArrayList<>();
@@ -17,9 +16,11 @@ public class StringSchema extends BaseSchema<String> {
     }
 
     public StringSchema minLength(int length) {
-        minLengthCheck = value -> value == null || value.length() >= length;
-        checks.removeIf(check -> check == minLengthCheck);
-        checks.add(minLengthCheck);
+        if (minLength != null) {
+            checks.removeIf(check -> check.toString().contains("minLength"));
+        }
+        minLength = length;
+        checks.add(value -> value == null || value.length() >= minLength);
         return this;
     }
 

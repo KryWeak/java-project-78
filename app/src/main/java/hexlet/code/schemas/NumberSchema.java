@@ -7,12 +7,12 @@ public class NumberSchema extends BaseSchema<Number> {
     }
 
     public NumberSchema positive() {
-        checks.add(value -> value.doubleValue() > 0);
+        checks.add(value -> value == null || value.doubleValue() > 0);
         return this;
     }
 
     public NumberSchema range(int min, int max) {
-        checks.add(value -> value.doubleValue() >= min && value.doubleValue() <= max);
+        checks.add(value -> value == null || (value.doubleValue() >= min && value.doubleValue() <= max));
         return this;
     }
 }
